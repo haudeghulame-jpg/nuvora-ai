@@ -1,0 +1,22 @@
+# dependencies
+node_modules/
+
+# Next.js build output
+.next/
+out/
+build/
+next-env.d.ts
+*.tsbuildinfo
+
+# tests
+coverage/
+
+# environment files: only the names-only example is committed
+.env
+.env.*
+!.env.example
+
+# hosting and OS files
+.vercel/
+.DS_Store
+npm-debug.log*
