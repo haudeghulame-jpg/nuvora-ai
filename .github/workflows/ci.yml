@@ -40,6 +40,18 @@ jobs:
             npm install
           fi
 
+      # Informational only. It prints which packages are flagged, how severe
+      # each is, the dependency paths and the available fixes. It never fails
+      # the build and never applies a fix: dependency changes need approval.
+      - name: Security audit report (does not fail the build)
+        continue-on-error: true
+        run: |
+          npm audit --json > audit.json || true
+          node scripts/audit-report.mjs audit.json
+          echo
+          echo "--- npm's own readable report ---"
+          npm audit || true
+
       - name: Lint
         run: npm run lint
 
