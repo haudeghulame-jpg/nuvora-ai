@@ -57,14 +57,28 @@ jobs:
           echo "--- npm's own readable report ---"
           npm audit || true
 
+      # Code is written without being able to run Prettier locally, so on
+      # branch pushes CI applies it first and every check below then runs on
+      # the formatted files. The result is committed at the end, after all
+      # checks pass. The four original documents are excluded by
+      # .prettierignore, and this step fails if any of them would change.
+      - name: Apply Prettier formatting (branch pushes only)
+        if: github.event_name == 'push' && github.ref_name != 'main'
+        run: |
+          npm run format
+          CHANGED_PROTECTED="$(git diff --name-only -- README.md CLAUDE.md docs/PRODUCT_SPEC_AR.md docs/ROADMAP.md)"
+          if [ -n "$CHANGED_PROTECTED" ]; then
+            echo "A protected document would be modified; refusing:"
+            echo "$CHANGED_PROTECTED"
+            exit 1
+          fi
+          echo "Files changed by formatting:"
+          git diff --name-only
+
       - name: Lint
         run: npm run lint
 
-      # Informational for now: the code was written without being able to run
-      # Prettier. The result is reported here; it becomes blocking once the
-      # files are formatted.
-      - name: Formatting check (informational, does not fail the build)
-        continue-on-error: true
+      - name: Formatting check
         run: npm run format:check
 
       - name: Typecheck
@@ -76,11 +90,12 @@ jobs:
       - name: Production build
         run: npm run build
 
-      # The lockfile pins exact dependency versions. It is created here because
-      # packages cannot be installed in the authoring environment. This step
-      # runs only after every check above has passed, only for pushes, and
-      # refuses to touch main.
-      - name: Commit package-lock.json if it is new or changed
+      # The lockfile pins exact dependency versions, and formatting is applied
+      # by CI. Both are needed because packages and Prettier cannot be run in
+      # the authoring environment. This step runs only after every check above
+      # has passed, only for pushes, never touches main, and stages only files
+      # git already tracks (so generated files such as audit.json are skipped).
+      - name: Commit lockfile and formatting changes if any
         if: github.event_name == 'push'
         env:
           BRANCH: ${{ github.ref_name }}
@@ -89,12 +104,14 @@ jobs:
             echo "Refusing to commit to main."
             exit 0
           fi
-          if [ -z "$(git status --porcelain package-lock.json)" ]; then
-            echo "package-lock.json is unchanged."
+          git add -u
+          if git diff --cached --quiet; then
+            echo "No lockfile or formatting changes to commit."
             exit 0
           fi
+          echo "Committing:"
+          git diff --cached --name-only
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add package-lock.json
-          git commit -m "chore: add or update package-lock.json [skip ci]"
+          git commit -m "chore: update package-lock.json and apply Prettier formatting [skip ci]"
           git push origin "HEAD:refs/heads/$BRANCH"
