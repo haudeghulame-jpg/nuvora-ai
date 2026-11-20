@@ -10,7 +10,9 @@ let report;
 try {
   report = JSON.parse(readFileSync(file, "utf8"));
 } catch (error) {
-  console.log(`Could not read ${file}: ${error instanceof Error ? error.message : error}`);
+  console.log(
+    `Could not read ${file}: ${error instanceof Error ? error.message : error}`,
+  );
   process.exit(0);
 }
 
@@ -22,7 +24,9 @@ const vulnerabilities = Object.values(report.vulnerabilities ?? {}).sort(
 );
 
 const lines = [];
-lines.push(`Totals by severity: ${JSON.stringify(report.metadata?.vulnerabilities ?? {})}`);
+lines.push(
+  `Totals by severity: ${JSON.stringify(report.metadata?.vulnerabilities ?? {})}`,
+);
 
 function dependencyPaths(name) {
   if (!/^[@a-z0-9][\w@/.~-]*$/i.test(name)) return "  (package name skipped)";
@@ -33,31 +37,43 @@ function dependencyPaths(name) {
     });
   } catch (error) {
     // `npm ls` exits non-zero in some situations but still prints the tree.
-    return (error.stdout ?? "").toString() || "  (no dependency tree available)";
+    return (
+      (error.stdout ?? "").toString() || "  (no dependency tree available)"
+    );
   }
 }
 
 for (const vuln of vulnerabilities) {
   const kind = vuln.isDirect ? "direct dependency" : "indirect dependency";
-  lines.push("", `${String(vuln.severity).toUpperCase()}  ${vuln.name}  (${kind}; affected range ${vuln.range})`);
+  lines.push(
+    "",
+    `${String(vuln.severity).toUpperCase()}  ${vuln.name}  (${kind}; affected range ${vuln.range})`,
+  );
 
   for (const via of vuln.via ?? []) {
     if (typeof via === "string") {
       lines.push(`  caused through package: ${via}`);
     } else {
-      lines.push(`  advisory: ${via.title} [${via.severity}] ${via.url} (affects ${via.range})`);
+      lines.push(
+        `  advisory: ${via.title} [${via.severity}] ${via.url} (affects ${via.range})`,
+      );
     }
   }
 
-  lines.push(`  installed at: ${(vuln.nodes ?? []).join(", ") || "not listed"}`);
-  if (vuln.effects?.length) lines.push(`  also affects: ${vuln.effects.join(", ")}`);
+  lines.push(
+    `  installed at: ${(vuln.nodes ?? []).join(", ") || "not listed"}`,
+  );
+  if (vuln.effects?.length)
+    lines.push(`  also affects: ${vuln.effects.join(", ")}`);
 
   const fix = vuln.fixAvailable;
   if (fix === true) {
     lines.push("  fix: available without a breaking change (NOT applied)");
   } else if (fix && typeof fix === "object") {
     const major = fix.isSemVerMajor ? " (breaking: major version change)" : "";
-    lines.push(`  fix: update ${fix.name} to ${fix.version}${major} (NOT applied)`);
+    lines.push(
+      `  fix: update ${fix.name} to ${fix.version}${major} (NOT applied)`,
+    );
   } else {
     lines.push("  fix: none available yet");
   }

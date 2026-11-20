@@ -3,7 +3,8 @@ import "./globals.css";
 
 export const metadata: Metadata = {
   title: "NUVORA AI",
-  description: "Arabic-first interactive learning platform (development scaffold).",
+  description:
+    "Arabic-first interactive learning platform (development scaffold).",
 };
 
 // Temporary root layout for step 1.1. Step 1.3 moves the pages under a
