@@ -1,0 +1,13 @@
+# Generated or installed files
+node_modules/
+.next/
+out/
+build/
+coverage/
+package-lock.json
+
+# Original project documents: never reformatted or modified by tooling
+README.md
+CLAUDE.md
+docs/PRODUCT_SPEC_AR.md
+docs/ROADMAP.md

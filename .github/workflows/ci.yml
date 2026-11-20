@@ -60,6 +60,13 @@ jobs:
       - name: Lint
         run: npm run lint
 
+      # Informational for now: the code was written without being able to run
+      # Prettier. The result is reported here; it becomes blocking once the
+      # files are formatted.
+      - name: Formatting check (informational, does not fail the build)
+        continue-on-error: true
+        run: npm run format:check
+
       - name: Typecheck
         run: npm run typecheck
 
