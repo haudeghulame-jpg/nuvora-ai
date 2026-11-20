@@ -33,10 +33,15 @@ jobs:
 
       - name: Install dependencies
         run: |
-          if [ -f package-lock.json ]; then
-            npm ci
+          # Strict install from the lockfile when it matches package.json.
+          # When package.json was edited without a lockfile update (dependencies
+          # cannot be installed in the authoring environment), fall back to
+          # npm install, which updates the lockfile; it is committed below only
+          # after every check passes.
+          if [ -f package-lock.json ] && npm ci; then
+            echo "Installed exactly from package-lock.json."
           else
-            echo "No package-lock.json yet; creating one with npm install."
+            echo "Lockfile missing or out of date; running npm install to update it."
             npm install
           fi
 
