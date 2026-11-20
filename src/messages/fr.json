@@ -1,0 +1,13 @@
+{
+  "meta": {
+    "title": "NUVORA AI",
+    "description": "Plateforme d'apprentissage interactive par IA, en arabe d'abord."
+  },
+  "home": {
+    "tagline": "Plateforme d'apprentissage interactive par IA, en arabe d'abord",
+    "prototypeNotice": "Prototype en construction : cette page n'est reliée à aucun service et n'affiche aucune donnée réelle."
+  },
+  "language": {
+    "label": "Langue"
+  }
+}
