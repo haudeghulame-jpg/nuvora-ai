@@ -20,7 +20,9 @@ describe("parseProfile", () => {
   it("reads a complete profile and converts the dates", () => {
     const profile = parseProfile(stored);
     expect(profile?.plan).toBe("plus");
-    expect(profile?.planExpiresAt).toEqual(new Date("2026-12-31T00:00:00.000Z"));
+    expect(profile?.planExpiresAt).toEqual(
+      new Date("2026-12-31T00:00:00.000Z"),
+    );
   });
 
   it("accepts a Free profile without subscription dates", () => {

@@ -121,7 +121,9 @@ export function AccountView({
     return (
       <div className="flex flex-col gap-3">
         <p>{t.profileMissing}</p>
-        {retryFailed ? <p role="alert">{messages.auth.errors.generic}</p> : null}
+        {retryFailed ? (
+          <p role="alert">{messages.auth.errors.generic}</p>
+        ) : null}
         <button
           type="button"
           disabled={retrying}
@@ -194,7 +196,12 @@ export function AccountView({
 
       <section className="flex flex-col gap-3">
         <h2 className="text-lg font-semibold">{t.requestsTitle}</h2>
-        <RequestsList key={user.uid} uid={user.uid} lang={lang} messages={messages} />
+        <RequestsList
+          key={user.uid}
+          uid={user.uid}
+          lang={lang}
+          messages={messages}
+        />
       </section>
     </div>
   );

@@ -22,10 +22,16 @@ describe("parsePaymentRequest", () => {
   });
 
   it("rejects data that is not a valid request", () => {
-    expect(parsePaymentRequest("r1", { ...stored, planId: "free2" })).toBeNull();
-    expect(parsePaymentRequest("r1", { ...stored, methodId: "masrvi" })).toBeNull();
+    expect(
+      parsePaymentRequest("r1", { ...stored, planId: "free2" }),
+    ).toBeNull();
+    expect(
+      parsePaymentRequest("r1", { ...stored, methodId: "masrvi" }),
+    ).toBeNull();
     expect(parsePaymentRequest("r1", { ...stored, status: "done" })).toBeNull();
-    expect(parsePaymentRequest("r1", { ...stored, createdAt: null })).toBeNull();
+    expect(
+      parsePaymentRequest("r1", { ...stored, createdAt: null }),
+    ).toBeNull();
     expect(parsePaymentRequest("r1", {})).toBeNull();
   });
 });

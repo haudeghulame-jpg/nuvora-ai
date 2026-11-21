@@ -91,7 +91,10 @@ export function LoginForm({
         {busy ? t.loading : t.login.submit}
       </button>
       <p className="text-sm">
-        <Link href={localizePath("/forgot-password", lang)} className="underline">
+        <Link
+          href={localizePath("/forgot-password", lang)}
+          className="underline"
+        >
           {t.login.forgot}
         </Link>
       </p>

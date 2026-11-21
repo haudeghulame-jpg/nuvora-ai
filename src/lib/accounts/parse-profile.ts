@@ -16,12 +16,16 @@ function isOneOf<T extends string>(
   list: readonly T[],
   value: unknown,
 ): value is T {
-  return typeof value === "string" && (list as readonly string[]).includes(value);
+  return (
+    typeof value === "string" && (list as readonly string[]).includes(value)
+  );
 }
 
 // Reads a stored profile document into a typed profile. Returns null when the
 // document is not shaped like a profile, so the screen never trusts bad data.
-export function parseProfile(data: Record<string, unknown>): UserProfile | null {
+export function parseProfile(
+  data: Record<string, unknown>,
+): UserProfile | null {
   const {
     uid,
     displayName,

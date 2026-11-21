@@ -8,12 +8,15 @@ import {
   signOut,
   updateProfile,
 } from "firebase/auth";
-import { addDoc, collection, doc, serverTimestamp, setDoc } from "firebase/firestore";
-import { buildNewProfile } from "../accounts/profile";
 import {
-  normalizeEmail,
-  normalizeName,
-} from "../auth/validation";
+  addDoc,
+  collection,
+  doc,
+  serverTimestamp,
+  setDoc,
+} from "firebase/firestore";
+import { buildNewProfile } from "../accounts/profile";
+import { normalizeEmail, normalizeName } from "../auth/validation";
 import {
   buildPaymentRequest,
   validatePaymentRequestInput,
@@ -44,7 +47,10 @@ export async function ensureProfile(user: User, displayName?: string) {
   if (name.length < 2) name = (email.split("@")[0] ?? "").padEnd(2, "_");
   await setDoc(
     doc(db, "users", user.uid),
-    buildNewProfile({ uid: user.uid, displayName: name, email }, serverTimestamp()),
+    buildNewProfile(
+      { uid: user.uid, displayName: name, email },
+      serverTimestamp(),
+    ),
   );
 }
 
@@ -70,11 +76,18 @@ export async function registerWithEmail(input: {
   await ensureProfile(credential.user, input.name);
 }
 
-export async function loginWithEmail(input: { email: string; password: string }) {
+export async function loginWithEmail(input: {
+  email: string;
+  password: string;
+}) {
   const auth = requireAuth();
   // Keeps the user signed in after the browser is closed.
   await setPersistence(auth, browserLocalPersistence);
-  await signInWithEmailAndPassword(auth, normalizeEmail(input.email), input.password);
+  await signInWithEmailAndPassword(
+    auth,
+    normalizeEmail(input.email),
+    input.password,
+  );
 }
 
 export async function logout() {
@@ -92,7 +105,8 @@ export async function createPaymentRequest(
   input: NewPaymentRequestInput,
 ) {
   const errors = validatePaymentRequestInput(input);
-  if (Object.keys(errors).length > 0) throw new Error("invalid-payment-request");
+  if (Object.keys(errors).length > 0)
+    throw new Error("invalid-payment-request");
   await addDoc(
     collection(requireDb(), "paymentRequests"),
     buildPaymentRequest(userId, input, serverTimestamp()),

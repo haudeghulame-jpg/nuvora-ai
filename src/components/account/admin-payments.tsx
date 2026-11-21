@@ -1,7 +1,14 @@
 "use client";
 
 import type { User } from "firebase/auth";
-import { collection, doc, getDoc, onSnapshot, query, where } from "firebase/firestore";
+import {
+  collection,
+  doc,
+  getDoc,
+  onSnapshot,
+  query,
+  where,
+} from "firebase/firestore";
 import { useEffect, useState } from "react";
 import type { Locale } from "../../i18n/config";
 import type { Messages } from "../../i18n/dictionaries";
@@ -159,7 +166,10 @@ function PendingList({
     if (!db) return;
     // The rules let only an active administrator list other people's requests.
     return onSnapshot(
-      query(collection(db, "paymentRequests"), where("status", "==", "pending")),
+      query(
+        collection(db, "paymentRequests"),
+        where("status", "==", "pending"),
+      ),
       (snapshot) => {
         const list: PaymentRequestView[] = [];
         snapshot.forEach((item) => {
@@ -224,7 +234,12 @@ export function AdminPayments({
   return (
     <div className="flex flex-col gap-6">
       <h1 className="text-2xl font-semibold">{t.title}</h1>
-      <PendingList key={auth.user.uid} user={auth.user} lang={lang} messages={messages} />
+      <PendingList
+        key={auth.user.uid}
+        user={auth.user}
+        lang={lang}
+        messages={messages}
+      />
     </div>
   );
 }

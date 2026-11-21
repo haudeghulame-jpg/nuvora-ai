@@ -1,4 +1,7 @@
-import { paymentMethodIds, type PaymentMethodId } from "../../config/payment-methods";
+import {
+  paymentMethodIds,
+  type PaymentMethodId,
+} from "../../config/payment-methods";
 import { planIds, type PlanId } from "../../config/plans";
 import { paymentStatuses, type PaymentStatus } from "./request";
 
@@ -16,7 +19,9 @@ function isOneOf<T extends string>(
   list: readonly T[],
   value: unknown,
 ): value is T {
-  return typeof value === "string" && (list as readonly string[]).includes(value);
+  return (
+    typeof value === "string" && (list as readonly string[]).includes(value)
+  );
 }
 
 // A stored payment request, as the screens show it.
