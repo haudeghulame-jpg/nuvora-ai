@@ -9,5 +9,135 @@
   },
   "language": {
     "label": "Language"
+  },
+  "auth": {
+    "unavailable": "Accounts are not available yet: the service is not connected. Signing in and creating an account are not possible right now.",
+    "loading": "Loading...",
+    "passwordHint": "At least 8 characters.",
+    "fields": {
+      "name": "Name",
+      "email": "Email",
+      "password": "Password",
+      "confirmPassword": "Confirm password"
+    },
+    "register": {
+      "title": "Create an account",
+      "submit": "Create account",
+      "haveAccount": "Already have an account?",
+      "goLogin": "Sign in"
+    },
+    "login": {
+      "title": "Sign in",
+      "submit": "Sign in",
+      "noAccount": "No account yet?",
+      "goRegister": "Create an account",
+      "forgot": "Forgot your password?"
+    },
+    "forgot": {
+      "title": "Reset your password",
+      "intro": "Enter your email and we will send you a link to reset your password.",
+      "submit": "Send the link",
+      "sent": "If this email is registered, a reset link has been sent to it. Check your inbox.",
+      "back": "Back to sign in"
+    },
+    "logout": "Sign out",
+    "errors": {
+      "required": "This field is required.",
+      "invalid": "Invalid value.",
+      "tooShort": "Value too short.",
+      "tooLong": "Value too long.",
+      "mismatch": "The passwords do not match.",
+      "invalidCredentials": "Incorrect email or password.",
+      "emailInUse": "This email is already registered.",
+      "weakPassword": "The password is too weak.",
+      "tooManyRequests": "Too many attempts. Try again in a moment.",
+      "network": "Network connection failed. Check your internet and try again.",
+      "generic": "An unexpected error occurred. Try again."
+    }
+  },
+  "account": {
+    "title": "My account",
+    "signedOut": "Sign in to see your account.",
+    "goLogin": "Sign in",
+    "name": "Name",
+    "email": "Email",
+    "currentPlan": "Current plan",
+    "expiresOn": "Expires on",
+    "noExpiry": "No expiry",
+    "plans": {
+      "free": "Free",
+      "plus": "Plus",
+      "pro": "Pro"
+    },
+    "subscribeCta": "Subscribe or renew",
+    "requestsTitle": "Payment requests",
+    "noRequests": "No payment requests.",
+    "statuses": {
+      "pending": "Pending administrator verification",
+      "approved": "Approved",
+      "rejected": "Rejected"
+    },
+    "rejectedNotice": "This request was rejected. Your plan has not changed. You can send a new request after checking the transfer details.",
+    "profileMissing": "Your profile has not been created yet.",
+    "retryProfile": "Create profile",
+    "loadError": "Could not load the data."
+  },
+  "subscribe": {
+    "title": "Subscription",
+    "intro": "Choose a plan and a payment method, make the transfer, then enter the transaction reference. An administrator checks the transfer by hand, and the subscription starts only after approval.",
+    "choosePlan": "1. Choose a plan",
+    "chooseMethod": "2. Choose a payment method",
+    "methods": {
+      "bankily": "Bankily",
+      "sedad": "Sedad"
+    },
+    "summary": {
+      "plan": "Plan",
+      "price": "Price",
+      "duration": "Duration",
+      "method": "Payment method",
+      "account": "Account number"
+    },
+    "currency": "MRU",
+    "daysUnit": "days",
+    "transferInstruction": "3. Transfer exactly the amount shown to the account number above from your payment app.",
+    "referenceLabel": "4. Transaction reference",
+    "referenceHint": "Digits 0-9 and Latin letters only, 4 to 40 characters.",
+    "referenceInvalid": "Invalid transaction reference.",
+    "submit": "Submit payment request",
+    "submitting": "Submitting...",
+    "success": "Your payment request has been submitted successfully. Your subscription is pending administrator verification.",
+    "submitFailed": "Could not submit the request. Try again.",
+    "signInRequired": "Sign in first to submit a payment request.",
+    "goLogin": "Sign in",
+    "seeRequests": "View my requests"
+  },
+  "admin": {
+    "title": "Pending payment requests",
+    "loading": "Loading...",
+    "forbidden": "This page is for administrators only.",
+    "empty": "No pending requests.",
+    "labels": {
+      "user": "User",
+      "plan": "Plan",
+      "amount": "Amount",
+      "method": "Payment method",
+      "reference": "Transaction reference",
+      "submitted": "Submitted on"
+    },
+    "notePlaceholder": "Internal note (optional)",
+    "approve": "Approve",
+    "reject": "Reject",
+    "working": "Working...",
+    "verifyHint": "Check the transfer in the payment app before approving.",
+    "errors": {
+      "forbidden": "You do not have permission.",
+      "notConfigured": "The server is not configured yet.",
+      "unauthenticated": "Session expired. Sign in again.",
+      "duplicateReference": "This transaction reference was already approved. It cannot be approved a second time.",
+      "notPending": "This request was already decided.",
+      "invalidAmount": "The amount does not match the plan price.",
+      "generic": "The operation could not be completed."
+    }
   }
 }

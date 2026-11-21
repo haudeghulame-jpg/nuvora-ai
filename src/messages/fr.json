@@ -9,5 +9,135 @@
   },
   "language": {
     "label": "Langue"
+  },
+  "auth": {
+    "unavailable": "Les comptes ne sont pas encore disponibles : le service n'est pas relié. Connexion et création de compte impossibles pour le moment.",
+    "loading": "Chargement...",
+    "passwordHint": "8 caractères au minimum.",
+    "fields": {
+      "name": "Nom",
+      "email": "Adresse e-mail",
+      "password": "Mot de passe",
+      "confirmPassword": "Confirmer le mot de passe"
+    },
+    "register": {
+      "title": "Créer un compte",
+      "submit": "Créer le compte",
+      "haveAccount": "Vous avez déjà un compte ?",
+      "goLogin": "Se connecter"
+    },
+    "login": {
+      "title": "Connexion",
+      "submit": "Se connecter",
+      "noAccount": "Pas encore de compte ?",
+      "goRegister": "Créer un compte",
+      "forgot": "Mot de passe oublié ?"
+    },
+    "forgot": {
+      "title": "Réinitialiser le mot de passe",
+      "intro": "Saisissez votre adresse e-mail : nous vous enverrons un lien de réinitialisation.",
+      "submit": "Envoyer le lien",
+      "sent": "Si cette adresse est enregistrée, un lien de réinitialisation vient de lui être envoyé. Vérifiez votre boîte de réception.",
+      "back": "Retour à la connexion"
+    },
+    "logout": "Se déconnecter",
+    "errors": {
+      "required": "Ce champ est obligatoire.",
+      "invalid": "Valeur invalide.",
+      "tooShort": "Valeur trop courte.",
+      "tooLong": "Valeur trop longue.",
+      "mismatch": "Les mots de passe ne correspondent pas.",
+      "invalidCredentials": "Adresse e-mail ou mot de passe incorrect.",
+      "emailInUse": "Cette adresse e-mail est déjà utilisée.",
+      "weakPassword": "Mot de passe trop faible.",
+      "tooManyRequests": "Trop de tentatives. Réessayez dans un instant.",
+      "network": "Connexion réseau impossible. Vérifiez Internet et réessayez.",
+      "generic": "Une erreur inattendue s'est produite. Réessayez."
+    }
+  },
+  "account": {
+    "title": "Mon compte",
+    "signedOut": "Connectez-vous pour voir votre compte.",
+    "goLogin": "Se connecter",
+    "name": "Nom",
+    "email": "Adresse e-mail",
+    "currentPlan": "Offre actuelle",
+    "expiresOn": "Expire le",
+    "noExpiry": "Sans expiration",
+    "plans": {
+      "free": "Free",
+      "plus": "Plus",
+      "pro": "Pro"
+    },
+    "subscribeCta": "S'abonner ou renouveler",
+    "requestsTitle": "Demandes de paiement",
+    "noRequests": "Aucune demande de paiement.",
+    "statuses": {
+      "pending": "En attente de vérification",
+      "approved": "Approuvée",
+      "rejected": "Refusée"
+    },
+    "rejectedNotice": "Cette demande a été refusée. Votre offre reste inchangée. Vous pouvez envoyer une nouvelle demande après avoir vérifié les détails du transfert.",
+    "profileMissing": "Votre profil n'est pas encore créé.",
+    "retryProfile": "Créer le profil",
+    "loadError": "Impossible de charger les données."
+  },
+  "subscribe": {
+    "title": "Abonnement",
+    "intro": "Choisissez l'offre puis le moyen de paiement, effectuez le transfert, puis saisissez le numéro de transaction. L'administration vérifie le transfert manuellement : l'abonnement ne commence qu'après son approbation.",
+    "choosePlan": "1. Choisissez l'offre",
+    "chooseMethod": "2. Choisissez le moyen de paiement",
+    "methods": {
+      "bankily": "Bankily",
+      "sedad": "Sedad"
+    },
+    "summary": {
+      "plan": "Offre",
+      "price": "Prix",
+      "duration": "Durée",
+      "method": "Moyen de paiement",
+      "account": "Numéro de compte"
+    },
+    "currency": "MRU",
+    "daysUnit": "jours",
+    "transferInstruction": "3. Transférez exactement le montant indiqué vers le numéro de compte ci-dessus depuis votre application de paiement.",
+    "referenceLabel": "4. Numéro de transaction",
+    "referenceHint": "Chiffres 0-9 et lettres latines uniquement, de 4 à 40 caractères.",
+    "referenceInvalid": "Numéro de transaction invalide.",
+    "submit": "Envoyer la demande de paiement",
+    "submitting": "Envoi...",
+    "success": "Votre demande de paiement a bien été envoyée. Votre abonnement est en attente de vérification par l'administration.",
+    "submitFailed": "Impossible d'envoyer la demande. Réessayez.",
+    "signInRequired": "Connectez-vous d'abord pour envoyer une demande de paiement.",
+    "goLogin": "Se connecter",
+    "seeRequests": "Voir mes demandes"
+  },
+  "admin": {
+    "title": "Demandes de paiement en attente",
+    "loading": "Chargement...",
+    "forbidden": "Cette page est réservée aux administrateurs.",
+    "empty": "Aucune demande en attente.",
+    "labels": {
+      "user": "Utilisateur",
+      "plan": "Offre",
+      "amount": "Montant",
+      "method": "Moyen de paiement",
+      "reference": "Numéro de transaction",
+      "submitted": "Date d'envoi"
+    },
+    "notePlaceholder": "Note interne (facultative)",
+    "approve": "Approuver",
+    "reject": "Refuser",
+    "working": "En cours...",
+    "verifyHint": "Vérifiez le transfert dans l'application de paiement avant d'approuver.",
+    "errors": {
+      "forbidden": "Vous n'avez pas l'autorisation.",
+      "notConfigured": "Le serveur n'est pas encore configuré.",
+      "unauthenticated": "Session expirée. Reconnectez-vous.",
+      "duplicateReference": "Ce numéro de transaction a déjà été approuvé. Il ne peut pas l'être une seconde fois.",
+      "notPending": "Cette demande a déjà été traitée.",
+      "invalidAmount": "Le montant ne correspond pas au prix de l'offre.",
+      "generic": "Opération impossible."
+    }
   }
 }
