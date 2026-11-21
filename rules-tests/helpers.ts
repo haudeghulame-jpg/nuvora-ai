@@ -66,7 +66,10 @@ export const asUser = (uid: string, email?: string) =>
 
 export async function loadRules(): Promise<void> {
   const { host, port } = emulatorHostAndPort();
-  const content = readFileSync(resolve(process.cwd(), "firestore.rules"), "utf8");
+  const content = readFileSync(
+    resolve(process.cwd(), "firestore.rules"),
+    "utf8",
+  );
   const response = await fetch(
     `http://${host}:${port}/emulator/v1/projects/${PROJECT_ID}:securityRules`,
     {
@@ -78,7 +81,9 @@ export async function loadRules(): Promise<void> {
     },
   );
   if (!response.ok) {
-    throw new Error(`Could not load the rules: ${response.status} ${await response.text()}`);
+    throw new Error(
+      `Could not load the rules: ${response.status} ${await response.text()}`,
+    );
   }
 }
 

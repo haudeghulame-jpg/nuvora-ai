@@ -1,4 +1,13 @@
-import { collection, deleteDoc, doc, getDoc, getDocs, serverTimestamp, setDoc, updateDoc } from "firebase/firestore";
+import {
+  collection,
+  deleteDoc,
+  doc,
+  getDoc,
+  getDocs,
+  serverTimestamp,
+  setDoc,
+  updateDoc,
+} from "firebase/firestore";
 import { afterAll, beforeAll, beforeEach, describe, expect, it } from "vitest";
 import { buildNewProfile } from "../src/lib/accounts/profile";
 import {
@@ -45,41 +54,72 @@ describe("creating a profile", () => {
   it("lets a new user create their own Free, active, non-admin profile", async () => {
     await setDoc(doc(asUser("alice"), "users", "alice"), newProfile("alice"));
     const stored = await getDoc(doc(asUser("alice"), "users", "alice"));
-    expect(stored.data()).toMatchObject({ role: "user", plan: "free", accountStatus: "active" });
+    expect(stored.data()).toMatchObject({
+      role: "user",
+      plan: "free",
+      accountStatus: "active",
+    });
   });
 
   it("refuses signed-out creation and creation for another uid", async () => {
-    await expectDenied(setDoc(doc(anonymous(), "users", "alice"), newProfile("alice")));
-    await expectDenied(setDoc(doc(asUser("mallory"), "users", "alice"), newProfile("alice")));
+    await expectDenied(
+      setDoc(doc(anonymous(), "users", "alice"), newProfile("alice")),
+    );
+    await expectDenied(
+      setDoc(doc(asUser("mallory"), "users", "alice"), newProfile("alice")),
+    );
   });
 
   it("refuses to register as an administrator", async () => {
     await expectDenied(
-      setDoc(doc(asUser("mallory"), "users", "mallory"), newProfile("mallory", { role: "admin" })),
+      setDoc(
+        doc(asUser("mallory"), "users", "mallory"),
+        newProfile("mallory", { role: "admin" }),
+      ),
     );
   });
 
   it("refuses to register on a paid plan or with subscription dates", async () => {
     const db = asUser("mallory");
-    await expectDenied(setDoc(doc(db, "users", "mallory"), newProfile("mallory", { plan: "pro" })));
     await expectDenied(
-      setDoc(doc(db, "users", "mallory"), newProfile("mallory", { planExpiresAt: new Date("2030-01-01") })),
+      setDoc(
+        doc(db, "users", "mallory"),
+        newProfile("mallory", { plan: "pro" }),
+      ),
     );
     await expectDenied(
-      setDoc(doc(db, "users", "mallory"), newProfile("mallory", { planStartedAt: new Date() })),
+      setDoc(
+        doc(db, "users", "mallory"),
+        newProfile("mallory", { planExpiresAt: new Date("2030-01-01") }),
+      ),
+    );
+    await expectDenied(
+      setDoc(
+        doc(db, "users", "mallory"),
+        newProfile("mallory", { planStartedAt: new Date() }),
+      ),
     );
   });
 
   it("refuses a suspended status, extra fields and a wrong email", async () => {
     const db = asUser("mallory");
     await expectDenied(
-      setDoc(doc(db, "users", "mallory"), newProfile("mallory", { accountStatus: "suspended" })),
+      setDoc(
+        doc(db, "users", "mallory"),
+        newProfile("mallory", { accountStatus: "suspended" }),
+      ),
     );
     await expectDenied(
-      setDoc(doc(db, "users", "mallory"), newProfile("mallory", { isAdmin: true })),
+      setDoc(
+        doc(db, "users", "mallory"),
+        newProfile("mallory", { isAdmin: true }),
+      ),
     );
     await expectDenied(
-      setDoc(doc(db, "users", "mallory"), newProfile("mallory", { email: "someone-else@example.com" })),
+      setDoc(
+        doc(db, "users", "mallory"),
+        newProfile("mallory", { email: "someone-else@example.com" }),
+      ),
     );
   });
 
@@ -94,9 +134,17 @@ describe("creating a profile", () => {
 
   it("refuses an empty or oversized name", async () => {
     const db = asUser("mallory");
-    await expectDenied(setDoc(doc(db, "users", "mallory"), newProfile("mallory", { displayName: "A" })));
     await expectDenied(
-      setDoc(doc(db, "users", "mallory"), newProfile("mallory", { displayName: "x".repeat(81) })),
+      setDoc(
+        doc(db, "users", "mallory"),
+        newProfile("mallory", { displayName: "A" }),
+      ),
+    );
+    await expectDenied(
+      setDoc(
+        doc(db, "users", "mallory"),
+        newProfile("mallory", { displayName: "x".repeat(81) }),
+      ),
     );
   });
 });
@@ -104,7 +152,9 @@ describe("creating a profile", () => {
 describe("reading profiles", () => {
   it("lets the owner read their own profile", async () => {
     await seedProfile("alice");
-    expect((await getDoc(doc(asUser("alice"), "users", "alice"))).exists()).toBe(true);
+    expect(
+      (await getDoc(doc(asUser("alice"), "users", "alice"))).exists(),
+    ).toBe(true);
   });
 
   it("hides a profile from signed-out visitors and other users", async () => {
@@ -117,7 +167,9 @@ describe("reading profiles", () => {
   it("lets an active administrator read other profiles, but not a normal user list", async () => {
     await seedProfile("admin1", { role: "admin" });
     await seedProfile("alice");
-    expect((await getDoc(doc(asUser("admin1"), "users", "alice"))).exists()).toBe(true);
+    expect(
+      (await getDoc(doc(asUser("admin1"), "users", "alice"))).exists(),
+    ).toBe(true);
     expect((await getDocs(collection(asUser("admin1"), "users"))).size).toBe(2);
     await expectDenied(getDocs(collection(asUser("alice"), "users")));
   });
@@ -143,13 +195,30 @@ describe("updating a profile", () => {
   it("refuses to change role, plan, status or subscription dates", async () => {
     await seedProfile("alice");
     const ref = () => doc(asUser("alice"), "users", "alice");
-    await expectDenied(updateDoc(ref(), { role: "admin", updatedAt: serverTimestamp() }));
-    await expectDenied(updateDoc(ref(), { plan: "pro", updatedAt: serverTimestamp() }));
-    await expectDenied(updateDoc(ref(), { accountStatus: "suspended", updatedAt: serverTimestamp() }));
     await expectDenied(
-      updateDoc(ref(), { planExpiresAt: new Date("2030-01-01"), updatedAt: serverTimestamp() }),
+      updateDoc(ref(), { role: "admin", updatedAt: serverTimestamp() }),
     );
-    await expectDenied(updateDoc(ref(), { planStartedAt: new Date(), updatedAt: serverTimestamp() }));
+    await expectDenied(
+      updateDoc(ref(), { plan: "pro", updatedAt: serverTimestamp() }),
+    );
+    await expectDenied(
+      updateDoc(ref(), {
+        accountStatus: "suspended",
+        updatedAt: serverTimestamp(),
+      }),
+    );
+    await expectDenied(
+      updateDoc(ref(), {
+        planExpiresAt: new Date("2030-01-01"),
+        updatedAt: serverTimestamp(),
+      }),
+    );
+    await expectDenied(
+      updateDoc(ref(), {
+        planStartedAt: new Date(),
+        updatedAt: serverTimestamp(),
+      }),
+    );
   });
 
   it("refuses to sneak a forbidden change in next to an allowed one", async () => {
@@ -167,10 +236,16 @@ describe("updating a profile", () => {
     await seedProfile("alice");
     await seedProfile("bob");
     await expectDenied(
-      updateDoc(doc(asUser("bob"), "users", "alice"), { displayName: "Hacked", updatedAt: serverTimestamp() }),
+      updateDoc(doc(asUser("bob"), "users", "alice"), {
+        displayName: "Hacked",
+        updatedAt: serverTimestamp(),
+      }),
     );
     await expectDenied(
-      updateDoc(doc(asUser("alice"), "users", "alice"), { email: "x@example.com", updatedAt: serverTimestamp() }),
+      updateDoc(doc(asUser("alice"), "users", "alice"), {
+        email: "x@example.com",
+        updatedAt: serverTimestamp(),
+      }),
     );
   });
 
@@ -178,7 +253,10 @@ describe("updating a profile", () => {
     await seedProfile("admin1", { role: "admin" });
     await seedProfile("alice");
     await expectDenied(
-      updateDoc(doc(asUser("admin1"), "users", "alice"), { plan: "pro", updatedAt: serverTimestamp() }),
+      updateDoc(doc(asUser("admin1"), "users", "alice"), {
+        plan: "pro",
+        updatedAt: serverTimestamp(),
+      }),
     );
   });
 
