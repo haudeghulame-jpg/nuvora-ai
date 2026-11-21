@@ -12,7 +12,11 @@ describe("validatePaymentRequestInput", () => {
     for (const planId of ["plus", "pro"]) {
       for (const methodId of ["bankily", "sedad"]) {
         expect(
-          validatePaymentRequestInput({ planId, methodId, reference: "123456" }),
+          validatePaymentRequestInput({
+            planId,
+            methodId,
+            reference: "123456",
+          }),
         ).toEqual({});
       }
     }
@@ -20,22 +24,42 @@ describe("validatePaymentRequestInput", () => {
 
   it("refuses the Free plan, unknown plans and unknown methods", () => {
     expect(
-      validatePaymentRequestInput({ planId: "free", methodId: "bankily", reference: "123456" }),
+      validatePaymentRequestInput({
+        planId: "free",
+        methodId: "bankily",
+        reference: "123456",
+      }),
     ).toEqual({ planId: "invalid" });
     expect(
-      validatePaymentRequestInput({ planId: "max", methodId: "bankily", reference: "123456" }),
+      validatePaymentRequestInput({
+        planId: "max",
+        methodId: "bankily",
+        reference: "123456",
+      }),
     ).toEqual({ planId: "invalid" });
     expect(
-      validatePaymentRequestInput({ planId: "plus", methodId: "masrvi", reference: "123456" }),
+      validatePaymentRequestInput({
+        planId: "plus",
+        methodId: "masrvi",
+        reference: "123456",
+      }),
     ).toEqual({ methodId: "invalid" });
   });
 
   it("requires a valid transaction reference", () => {
     expect(
-      validatePaymentRequestInput({ planId: "plus", methodId: "sedad", reference: "" }),
+      validatePaymentRequestInput({
+        planId: "plus",
+        methodId: "sedad",
+        reference: "",
+      }),
     ).toEqual({ reference: "required" });
     expect(
-      validatePaymentRequestInput({ planId: "plus", methodId: "sedad", reference: "1" }),
+      validatePaymentRequestInput({
+        planId: "plus",
+        methodId: "sedad",
+        reference: "1",
+      }),
     ).toEqual({ reference: "invalid" });
   });
 });
@@ -71,13 +95,21 @@ describe("buildPaymentRequest", () => {
       { planId: "pro", methodId: "sedad", reference: "ABCD1234" },
       stamp,
     );
-    expect(Object.keys(request).sort()).toEqual([...NEW_PAYMENT_REQUEST_FIELDS].sort());
-    expect(Object.keys(request).join(" ")).not.toMatch(/image|receipt|file|photo/i);
+    expect(Object.keys(request).sort()).toEqual(
+      [...NEW_PAYMENT_REQUEST_FIELDS].sort(),
+    );
+    expect(Object.keys(request).join(" ")).not.toMatch(
+      /image|receipt|file|photo/i,
+    );
   });
 
   it("refuses invalid input instead of guessing", () => {
     expect(() =>
-      buildPaymentRequest("uid-1", { planId: "free", methodId: "sedad", reference: "ABCD" }, stamp),
+      buildPaymentRequest(
+        "uid-1",
+        { planId: "free", methodId: "sedad", reference: "ABCD" },
+        stamp,
+      ),
     ).toThrow();
   });
 });

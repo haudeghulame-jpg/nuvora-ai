@@ -1,4 +1,9 @@
-import { computeExpiry, isPaidPlan, plans, type PlanId } from "../../config/plans";
+import {
+  computeExpiry,
+  isPaidPlan,
+  plans,
+  type PlanId,
+} from "../../config/plans";
 import { referenceKey } from "./reference";
 import type { PaymentRequest } from "./request";
 
@@ -65,7 +70,13 @@ export function decidePaymentRequest(args: {
     // A rejection changes only the request. The user stays on their plan.
     return {
       ok: true,
-      request: { status: "rejected", decidedBy: adminUid, decidedAt: now, adminNote, updatedAt: now },
+      request: {
+        status: "rejected",
+        decidedBy: adminUid,
+        decidedAt: now,
+        adminNote,
+        updatedAt: now,
+      },
       subscription: null,
       approvedReferenceKey: null,
     };
@@ -75,14 +86,21 @@ export function decidePaymentRequest(args: {
   if (request.amountMru !== plans[request.planId].priceMru) {
     return { ok: false, error: "invalidAmount" };
   }
-  if (args.referenceAlreadyApproved) return { ok: false, error: "duplicateReference" };
+  if (args.referenceAlreadyApproved)
+    return { ok: false, error: "duplicateReference" };
 
   const planExpiresAt = computeExpiry(now, request.planId);
   if (!planExpiresAt) return { ok: false, error: "invalidPlan" };
 
   return {
     ok: true,
-    request: { status: "approved", decidedBy: adminUid, decidedAt: now, adminNote, updatedAt: now },
+    request: {
+      status: "approved",
+      decidedBy: adminUid,
+      decidedAt: now,
+      adminNote,
+      updatedAt: now,
+    },
     subscription: {
       plan: request.planId,
       // The period starts only now, at approval, never at submission.

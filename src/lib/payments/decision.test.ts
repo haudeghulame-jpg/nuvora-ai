@@ -26,7 +26,9 @@ describe("approving a payment", () => {
     expect(result.request.status).toBe("approved");
     expect(result.subscription?.plan).toBe("plus");
     expect(result.subscription?.planStartedAt).toEqual(now);
-    expect(result.subscription?.planExpiresAt.getTime()).toBe(now.getTime() + 30 * DAY);
+    expect(result.subscription?.planExpiresAt.getTime()).toBe(
+      now.getTime() + 30 * DAY,
+    );
   });
 
   it("activates Pro for exactly 40 days", () => {
@@ -36,7 +38,9 @@ describe("approving a payment", () => {
     });
     if (!result.ok) throw new Error("expected ok");
     expect(result.subscription?.plan).toBe("pro");
-    expect(result.subscription?.planExpiresAt.getTime()).toBe(now.getTime() + 40 * DAY);
+    expect(result.subscription?.planExpiresAt.getTime()).toBe(
+      now.getTime() + 40 * DAY,
+    );
   });
 
   it("records who approved and when", () => {
@@ -53,10 +57,18 @@ describe("approving a payment", () => {
   });
 
   it("keeps a trimmed internal note, or null when empty", () => {
-    const withNote = decidePaymentRequest({ ...base, request: pendingPlus, adminNote: "  checked in Bankily  " });
+    const withNote = decidePaymentRequest({
+      ...base,
+      request: pendingPlus,
+      adminNote: "  checked in Bankily  ",
+    });
     if (!withNote.ok) throw new Error("expected ok");
     expect(withNote.request.adminNote).toBe("checked in Bankily");
-    const without = decidePaymentRequest({ ...base, request: pendingPlus, adminNote: "   " });
+    const without = decidePaymentRequest({
+      ...base,
+      request: pendingPlus,
+      adminNote: "   ",
+    });
     if (!without.ok) throw new Error("expected ok");
     expect(without.request.adminNote).toBeNull();
   });
@@ -65,7 +77,11 @@ describe("approving a payment", () => {
 describe("refusing to approve", () => {
   it("refuses a transaction that was already approved", () => {
     expect(
-      decidePaymentRequest({ ...base, request: pendingPlus, referenceAlreadyApproved: true }),
+      decidePaymentRequest({
+        ...base,
+        request: pendingPlus,
+        referenceAlreadyApproved: true,
+      }),
     ).toEqual({ ok: false, error: "duplicateReference" });
   });
 
@@ -79,10 +95,16 @@ describe("refusing to approve", () => {
 
   it("refuses an amount that does not match the plan price", () => {
     expect(
-      decidePaymentRequest({ ...base, request: { ...pendingPlus, amountMru: 1 } }),
+      decidePaymentRequest({
+        ...base,
+        request: { ...pendingPlus, amountMru: 1 },
+      }),
     ).toEqual({ ok: false, error: "invalidAmount" });
     expect(
-      decidePaymentRequest({ ...base, request: { ...pendingPlus, amountMru: 900 } }),
+      decidePaymentRequest({
+        ...base,
+        request: { ...pendingPlus, amountMru: 900 },
+      }),
     ).toEqual({ ok: false, error: "invalidAmount" });
   });
 
@@ -97,7 +119,11 @@ describe("refusing to approve", () => {
 
   it("refuses a note that is too long", () => {
     expect(
-      decidePaymentRequest({ ...base, request: pendingPlus, adminNote: "x".repeat(NOTE_MAX + 1) }),
+      decidePaymentRequest({
+        ...base,
+        request: pendingPlus,
+        adminNote: "x".repeat(NOTE_MAX + 1),
+      }),
     ).toEqual({ ok: false, error: "noteTooLong" });
   });
 });

@@ -41,7 +41,10 @@ export const NEW_PROFILE_FIELDS = [
 ] as const;
 
 // The only fields a user may change on their own profile afterwards.
-export const USER_EDITABLE_PROFILE_FIELDS = ["displayName", "updatedAt"] as const;
+export const USER_EDITABLE_PROFILE_FIELDS = [
+  "displayName",
+  "updatedAt",
+] as const;
 
 export function buildNewProfile<Stamp>(
   input: { uid: string; displayName: string; email: string },
@@ -77,5 +80,9 @@ export function getProfilePlan(
 export function isActiveAdmin(
   profile: Pick<UserProfile, "role" | "accountStatus"> | null,
 ): boolean {
-  return profile !== null && profile.role === "admin" && profile.accountStatus === "active";
+  return (
+    profile !== null &&
+    profile.role === "admin" &&
+    profile.accountStatus === "active"
+  );
 }

@@ -45,18 +45,30 @@ describe("buildNewProfile", () => {
 
 describe("getProfilePlan", () => {
   it("keeps a paid plan until it expires, then falls back to Free", () => {
-    const active = { plan: "plus" as const, planExpiresAt: new Date(now.getTime() + DAY) };
+    const active = {
+      plan: "plus" as const,
+      planExpiresAt: new Date(now.getTime() + DAY),
+    };
     expect(getProfilePlan(active, now)).toBe("plus");
-    const expired = { plan: "plus" as const, planExpiresAt: new Date(now.getTime() - DAY) };
+    const expired = {
+      plan: "plus" as const,
+      planExpiresAt: new Date(now.getTime() - DAY),
+    };
     expect(getProfilePlan(expired, now)).toBe("free");
   });
 });
 
 describe("isActiveAdmin", () => {
   it("is true only for an active administrator", () => {
-    expect(isActiveAdmin({ role: "admin", accountStatus: "active" })).toBe(true);
-    expect(isActiveAdmin({ role: "admin", accountStatus: "suspended" })).toBe(false);
-    expect(isActiveAdmin({ role: "user", accountStatus: "active" })).toBe(false);
+    expect(isActiveAdmin({ role: "admin", accountStatus: "active" })).toBe(
+      true,
+    );
+    expect(isActiveAdmin({ role: "admin", accountStatus: "suspended" })).toBe(
+      false,
+    );
+    expect(isActiveAdmin({ role: "user", accountStatus: "active" })).toBe(
+      false,
+    );
     expect(isActiveAdmin(null)).toBe(false);
   });
 });

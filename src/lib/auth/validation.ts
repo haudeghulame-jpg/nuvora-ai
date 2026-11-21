@@ -1,6 +1,7 @@
 // Form validation for registration, login and password reset. Pure functions:
 // they return error codes (not text) so each language can show its own message.
-export type FieldError = "required" | "invalid" | "tooShort" | "tooLong" | "mismatch";
+export type FieldError =
+  "required" | "invalid" | "tooShort" | "tooLong" | "mismatch";
 
 export type RegistrationInput = {
   name: string;
@@ -9,7 +10,9 @@ export type RegistrationInput = {
   confirmPassword: string;
 };
 
-export type RegistrationErrors = Partial<Record<keyof RegistrationInput, FieldError>>;
+export type RegistrationErrors = Partial<
+  Record<keyof RegistrationInput, FieldError>
+>;
 
 export const NAME_MIN = 2;
 export const NAME_MAX = 80;
@@ -51,7 +54,9 @@ export function validateNewPassword(password: string): FieldError | null {
   return null;
 }
 
-export function validateRegistration(input: RegistrationInput): RegistrationErrors {
+export function validateRegistration(
+  input: RegistrationInput,
+): RegistrationErrors {
   const errors: RegistrationErrors = {};
   const name = validateName(input.name);
   if (name) errors.name = name;

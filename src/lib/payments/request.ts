@@ -1,6 +1,13 @@
-import { paymentMethodIds, type PaymentMethodId } from "../../config/payment-methods";
+import {
+  paymentMethodIds,
+  type PaymentMethodId,
+} from "../../config/payment-methods";
 import { isPaidPlan, planIds, plans, type PlanId } from "../../config/plans";
-import { cleanReference, validateReference, type ReferenceError } from "./reference";
+import {
+  cleanReference,
+  validateReference,
+  type ReferenceError,
+} from "./reference";
 
 // A payment request is stored at paymentRequests/{id}. There are no images and
 // no receipt files: only the transaction reference typed by the user.
@@ -44,7 +51,10 @@ export const NEW_PAYMENT_REQUEST_FIELDS = [
 ] as const;
 
 function isPaidPlanId(value: string): value is PlanId {
-  return (planIds as readonly string[]).includes(value) && isPaidPlan(value as PlanId);
+  return (
+    (planIds as readonly string[]).includes(value) &&
+    isPaidPlan(value as PlanId)
+  );
 }
 
 function isMethodId(value: string): value is PaymentMethodId {
