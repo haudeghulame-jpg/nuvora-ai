@@ -1,5 +1,8 @@
 import { NextResponse } from "next/server";
-import { NOTE_MAX, type Decision } from "../../../../../../lib/payments/decision";
+import {
+  NOTE_MAX,
+  type Decision,
+} from "../../../../../../lib/payments/decision";
 import {
   applyDecision,
   type ApplyError,

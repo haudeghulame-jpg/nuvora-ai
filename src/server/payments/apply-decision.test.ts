@@ -37,9 +37,21 @@ class MemoryStore implements DecisionStore {
 function setup() {
   const store = new MemoryStore();
   store.docs.set("users/admin1", { role: "admin", accountStatus: "active" });
-  store.docs.set("users/user1", { role: "user", accountStatus: "active", plan: "free" });
-  store.docs.set("users/user2", { role: "user", accountStatus: "active", plan: "free" });
-  const request = (userId: string, reference: string, over: StoreData = {}) => ({
+  store.docs.set("users/user1", {
+    role: "user",
+    accountStatus: "active",
+    plan: "free",
+  });
+  store.docs.set("users/user2", {
+    role: "user",
+    accountStatus: "active",
+    plan: "free",
+  });
+  const request = (
+    userId: string,
+    reference: string,
+    over: StoreData = {},
+  ) => ({
     userId,
     planId: "plus",
     methodId: "bankily",
@@ -53,22 +65,37 @@ function setup() {
   return { store, request };
 }
 
-const approve = (store: DecisionStore, requestId: string, adminUid = "admin1") =>
-  applyDecision(store, { adminUid, requestId, decision: "approve", now });
+const approve = (
+  store: DecisionStore,
+  requestId: string,
+  adminUid = "admin1",
+) => applyDecision(store, { adminUid, requestId, decision: "approve", now });
 
 describe("who may decide", () => {
   it("refuses a normal user and changes nothing", async () => {
     const { store } = setup();
     const before = JSON.stringify([...store.docs]);
-    expect(await approve(store, "r1", "user1")).toEqual({ ok: false, code: "forbidden" });
+    expect(await approve(store, "r1", "user1")).toEqual({
+      ok: false,
+      code: "forbidden",
+    });
     expect(JSON.stringify([...store.docs])).toBe(before);
   });
 
   it("refuses a suspended administrator and an unknown account", async () => {
     const { store } = setup();
-    store.docs.set("users/admin2", { role: "admin", accountStatus: "suspended" });
-    expect(await approve(store, "r1", "admin2")).toEqual({ ok: false, code: "forbidden" });
-    expect(await approve(store, "r1", "ghost")).toEqual({ ok: false, code: "forbidden" });
+    store.docs.set("users/admin2", {
+      role: "admin",
+      accountStatus: "suspended",
+    });
+    expect(await approve(store, "r1", "admin2")).toEqual({
+      ok: false,
+      code: "forbidden",
+    });
+    expect(await approve(store, "r1", "ghost")).toEqual({
+      ok: false,
+      code: "forbidden",
+    });
   });
 });
 
@@ -104,7 +131,10 @@ describe("approval", () => {
       request("user1", "PRO-9999", { planId: "pro", amountMru: 1500 }),
     );
     const outcome = await approve(store, "r3");
-    expect(outcome).toMatchObject({ ok: true, planExpiresAt: new Date(now.getTime() + 40 * DAY) });
+    expect(outcome).toMatchObject({
+      ok: true,
+      planExpiresAt: new Date(now.getTime() + 40 * DAY),
+    });
   });
 
   it("blocks the same transaction from being approved twice, however it is written", async () => {
@@ -113,19 +143,30 @@ describe("approval", () => {
     const second = await approve(store, "r2"); // "ab1234" is the same transfer
     expect(second).toEqual({ ok: false, code: "duplicateReference" });
     expect(store.docs.get("users/user2")).toMatchObject({ plan: "free" });
-    expect(store.docs.get("paymentRequests/r2")).toMatchObject({ status: "pending" });
+    expect(store.docs.get("paymentRequests/r2")).toMatchObject({
+      status: "pending",
+    });
   });
 
   it("cannot approve a request twice", async () => {
     const { store } = setup();
     await approve(store, "r1");
-    expect(await approve(store, "r1")).toEqual({ ok: false, code: "notPending" });
+    expect(await approve(store, "r1")).toEqual({
+      ok: false,
+      code: "notPending",
+    });
   });
 
   it("refuses a request whose amount does not match the plan price", async () => {
     const { store, request } = setup();
-    store.docs.set("paymentRequests/r4", request("user1", "CHEAP-1111", { amountMru: 1 }));
-    expect(await approve(store, "r4")).toEqual({ ok: false, code: "invalidAmount" });
+    store.docs.set(
+      "paymentRequests/r4",
+      request("user1", "CHEAP-1111", { amountMru: 1 }),
+    );
+    expect(await approve(store, "r4")).toEqual({
+      ok: false,
+      code: "invalidAmount",
+    });
     expect(store.docs.get("users/user1")).toMatchObject({ plan: "free" });
   });
 });
@@ -140,7 +181,11 @@ describe("rejection", () => {
       note: "transfer not found",
       now,
     });
-    expect(outcome).toEqual({ ok: true, status: "rejected", planExpiresAt: null });
+    expect(outcome).toEqual({
+      ok: true,
+      status: "rejected",
+      planExpiresAt: null,
+    });
     expect(store.docs.get("paymentRequests/r1")).toMatchObject({
       status: "rejected",
       adminNote: "transfer not found",
@@ -150,16 +195,24 @@ describe("rejection", () => {
       accountStatus: "active",
       plan: "free",
     });
-    expect([...store.docs.keys()].some((k) => k.startsWith("approvedReferences/"))).toBe(false);
+    expect(
+      [...store.docs.keys()].some((k) => k.startsWith("approvedReferences/")),
+    ).toBe(false);
   });
 });
 
 describe("missing or damaged data", () => {
   it("reports a missing request, a missing user and bad stored data", async () => {
     const { store, request } = setup();
-    expect(await approve(store, "nope")).toEqual({ ok: false, code: "notFound" });
+    expect(await approve(store, "nope")).toEqual({
+      ok: false,
+      code: "notFound",
+    });
     store.docs.set("paymentRequests/r5", request("ghostuser", "GHOST-1234"));
-    expect(await approve(store, "r5")).toEqual({ ok: false, code: "userMissing" });
+    expect(await approve(store, "r5")).toEqual({
+      ok: false,
+      code: "userMissing",
+    });
     store.docs.set("paymentRequests/r6", { userId: "user1", planId: "max" });
     expect(await approve(store, "r6")).toEqual({ ok: false, code: "badData" });
   });

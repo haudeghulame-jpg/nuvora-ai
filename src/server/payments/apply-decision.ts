@@ -10,7 +10,10 @@ import {
   type DecisionError,
 } from "../../lib/payments/decision";
 import { referenceKey } from "../../lib/payments/reference";
-import { paymentStatuses, type PaymentStatus } from "../../lib/payments/request";
+import {
+  paymentStatuses,
+  type PaymentStatus,
+} from "../../lib/payments/request";
 
 // Server-side application of an administrator's decision. It talks to the
 // database only through the small DecisionStore interface, so the Firestore
@@ -29,11 +32,7 @@ export interface DecisionStore {
 }
 
 export type ApplyError =
-  | "forbidden"
-  | "notFound"
-  | "userMissing"
-  | "badData"
-  | DecisionError;
+  "forbidden" | "notFound" | "userMissing" | "badData" | DecisionError;
 
 export type ApplyOutcome =
   | { ok: true; status: "approved" | "rejected"; planExpiresAt: Date | null }
@@ -51,7 +50,9 @@ function isOneOf<T extends string>(
   list: readonly T[],
   value: unknown,
 ): value is T {
-  return typeof value === "string" && (list as readonly string[]).includes(value);
+  return (
+    typeof value === "string" && (list as readonly string[]).includes(value)
+  );
 }
 
 // A stored value is only used after its shape was checked.
