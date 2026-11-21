@@ -1,0 +1,140 @@
+rules_version = '2';
+
+// NUVORA AI Firestore security rules.
+//
+// Principle: the browser may only do the few things listed here. Everything
+// that changes a subscription, a role, a payment decision or an approved
+// transaction is written by the server with the Admin SDK (which bypasses
+// these rules) after it has verified, from the stored profile, that the caller
+// is an active administrator. Even a real administrator cannot write those
+// fields from the browser: the rules below deny it.
+//
+// NOT YET DEPLOYED. Deploying these rules needs the owner's approval.
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function signedIn() {
+      return request.auth != null;
+    }
+
+    function userDoc(uid) {
+      return get(/databases/$(database)/documents/users/$(uid));
+    }
+
+    function hasProfile(uid) {
+      return exists(/databases/$(database)/documents/users/$(uid));
+    }
+
+    // Reads (never trusts) the stored profile. Used only for reading data.
+    function isAdmin() {
+      return signedIn()
+        && hasProfile(request.auth.uid)
+        && userDoc(request.auth.uid).data.role == 'admin'
+        && userDoc(request.auth.uid).data.accountStatus == 'active';
+    }
+
+    function isActiveUser() {
+      return signedIn()
+        && hasProfile(request.auth.uid)
+        && userDoc(request.auth.uid).data.accountStatus == 'active';
+    }
+
+    function validName(value) {
+      return value is string && value.size() >= 2 && value.size() <= 80;
+    }
+
+    // ---------------------------------------------------------------
+    // users/{uid}: the profile. No password is ever stored here.
+    // ---------------------------------------------------------------
+    match /users/{uid} {
+      allow get: if signedIn() && (request.auth.uid == uid || isAdmin());
+      allow list: if isAdmin();
+
+      // A new account can only be created as an active Free user, with no
+      // subscription dates. Role, plan and status cannot be chosen here.
+      allow create: if signedIn()
+        && request.auth.uid == uid
+        && request.resource.data.keys().hasOnly([
+          'uid', 'displayName', 'email', 'role', 'plan', 'accountStatus',
+          'planStartedAt', 'planExpiresAt', 'createdAt', 'updatedAt'
+        ])
+        && request.resource.data.keys().hasAll([
+          'uid', 'displayName', 'email', 'role', 'plan', 'accountStatus',
+          'planStartedAt', 'planExpiresAt', 'createdAt', 'updatedAt'
+        ])
+        && request.resource.data.uid == uid
+        && validName(request.resource.data.displayName)
+        && request.resource.data.email is string
+        && request.auth.token.email != null
+        && request.resource.data.email == request.auth.token.email.lower()
+        && request.resource.data.role == 'user'
+        && request.resource.data.plan == 'free'
+        && request.resource.data.accountStatus == 'active'
+        && request.resource.data.planStartedAt == null
+        && request.resource.data.planExpiresAt == null
+        && request.resource.data.createdAt == request.time
+        && request.resource.data.updatedAt == request.time;
+
+      // The owner may change only the display name (and the update time).
+      allow update: if signedIn()
+        && request.auth.uid == uid
+        && request.resource.data.diff(resource.data).affectedKeys()
+             .hasOnly(['displayName', 'updatedAt'])
+        && validName(request.resource.data.displayName)
+        && request.resource.data.updatedAt == request.time;
+
+      allow delete: if false;
+    }
+
+    // ---------------------------------------------------------------
+    // paymentRequests/{id}: no images, only the typed transaction reference.
+    // ---------------------------------------------------------------
+    match /paymentRequests/{requestId} {
+      allow get: if signedIn()
+        && (resource.data.userId == request.auth.uid || isAdmin());
+      allow list: if signedIn()
+        && (resource.data.userId == request.auth.uid || isAdmin());
+
+      // Users create only their own, only as "pending", with the exact price
+      // of the plan (Plus 400 MRU, Pro 1500 MRU) and Bankily or Sedad.
+      // Prices are repeated here and must be kept in step with
+      // src/config/plans.ts; the server re-checks the amount at approval.
+      allow create: if isActiveUser()
+        && request.resource.data.keys().hasOnly([
+          'userId', 'planId', 'methodId', 'amountMru',
+          'transactionReference', 'status', 'createdAt', 'updatedAt'
+        ])
+        && request.resource.data.keys().hasAll([
+          'userId', 'planId', 'methodId', 'amountMru',
+          'transactionReference', 'status', 'createdAt', 'updatedAt'
+        ])
+        && request.resource.data.userId == request.auth.uid
+        && request.resource.data.status == 'pending'
+        && request.resource.data.methodId in ['bankily', 'sedad']
+        && ((request.resource.data.planId == 'plus'
+              && request.resource.data.amountMru == 400)
+            || (request.resource.data.planId == 'pro'
+              && request.resource.data.amountMru == 1500))
+        && request.resource.data.transactionReference is string
+        && request.resource.data.transactionReference
+             .matches('^[A-Za-z0-9][A-Za-z0-9 _/-]{2,38}[A-Za-z0-9]$')
+        && request.resource.data.createdAt == request.time
+        && request.resource.data.updatedAt == request.time;
+
+      // Nobody changes or deletes a request from the browser. Approval and
+      // rejection are written only by the server.
+      allow update, delete: if false;
+    }
+
+    // approvedReferences/{key}: written only by the server when a payment is
+    // approved, so one transaction can never be approved twice.
+    match /approvedReferences/{key} {
+      allow read, write: if false;
+    }
+
+    // Everything else is closed.
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}
