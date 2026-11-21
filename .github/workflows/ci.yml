@@ -87,6 +87,21 @@ jobs:
       - name: Tests
         run: npm test
 
+      # Tests the Firestore security rules against the local Firebase emulator.
+      # Free, runs only on this runner, uses no Firebase project and no
+      # billing. The Firebase CLI is fetched on demand and is not a project
+      # dependency.
+      - name: Set up Java (needed by the Firestore emulator)
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "21"
+
+      - name: Firestore security rules tests (local emulator)
+        run: >
+          npx --yes firebase-tools@15 emulators:exec --only firestore
+          --project demo-nuvora "npm run test:rules"
+
       - name: Production build
         run: npm run build
 
